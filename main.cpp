@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <ncurses.h>
-#include "gap_buffer.h"
+#include "gap_buffer.cpp"
 
 using namespace std;
 
@@ -27,9 +27,19 @@ int main(int argc, char *argv[])
   //
 
   initscr();			/* Start curses mode 		  */
-  printw("");	/* Print Hello World		  */
-  refresh();			/* Print it on to the real screen */
-  getch();			/* Wait for user input */
-  endwin();
+
+  FILE *file; // open the file to be edited
+  file = fopen(argv[1], "r");
+
+  GapBuffer main_buffer(file);
+
+  bool quit = false;
+  while (quit == false)
+  {
+    printw("");	/* Print Hello World		  */
+    refresh();			/* Print it on to the real screen */
+    getch();			/* Wait for user input */
+    endwin();
+  }
   return 0;
 }
