@@ -26,14 +26,20 @@ int main(int argc, char *argv[])
   // if C^-q pressed, save gap buffer to file, destruct gapbuffer quit
   //
 
+  enum mode {read, write, quit}; //start the program on read to read the file in if it is not blank
+  mode mode = read;
+
   FILE *file; // open the file to be edited
-  file = fopen(argv[1], "w");
+
+  if (mode == read)
+  {
+    file = fopen(argv[1], "r");
+  }
 
   LinkedStack<char> main_buffer = LinkedStack<char>();
   initscr();			/* Start curses mode 		  */
 
-  bool quit = false;
-  while (quit == false)
+  while (mode == quit)
   {
 
     main_buffer.Push(getch());			/* Wait for user input */
@@ -44,7 +50,7 @@ int main(int argc, char *argv[])
     {
       endwin();
       fclose(file);
-      quit = true;
+      mode = quit;
     }
 
   }
