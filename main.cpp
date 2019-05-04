@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <ncurses.h>
-#include "gap_buffer.cpp"
+#include "LinkedStack.h"
 
 using namespace std;
 
@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 {
 
   //open file at argv[1]
-  //put it in a gap GapBuffer for loop or something
+  //put it in a LinkedList new node = newline for loop or something
   //
   //
   //
@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
   //
   // while true
   //
-  // for i in GapBuffer: print char on screen, if gap print cursor char
+  // for i in LinkedList: print char on screen, if gap print cursor char
   //update ncurses screen
   // if backspace pressed: remove char from gap GapBuffer
   //
@@ -26,20 +26,29 @@ int main(int argc, char *argv[])
   // if C^-q pressed, save gap buffer to file, destruct gapbuffer quit
   //
 
-  initscr();			/* Start curses mode 		  */
-
   FILE *file; // open the file to be edited
-  file = fopen(argv[1], "r");
+  file = fopen(argv[1], "w");
 
-  GapBuffer main_buffer(file);
+  LinkedStack<char> main_buffer = LinkedStack<char>();
+  initscr();			/* Start curses mode 		  */
 
   bool quit = false;
   while (quit == false)
   {
-    printw("");	/* Print Hello World		  */
+
+    main_buffer.Push(getch());			/* Wait for user input */
+    putc(main_buffer.Pop(), file);
     refresh();			/* Print it on to the real screen */
-    getch();			/* Wait for user input */
-    endwin();
+
+    if (getch() == '?')
+    {
+      endwin();
+      fclose(file);
+      quit = true;
+    }
+
   }
+
+
   return 0;
 }
