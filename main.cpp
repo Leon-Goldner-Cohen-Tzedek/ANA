@@ -1,60 +1,61 @@
-#include <stdio.h>
+#include <unistd.h>
+#include <vector>
 #include <ncurses.h>
+#include <stdio.h>
 #include "LinkedStack.h"
 
 using namespace std;
+int file_load(char *file);
+void refresh_from_buffers();
+void get_event();
 
 int main(int argc, char *argv[])
 {
+  vector<char> edit_buffer;
 
-  //open file at argv[1]
-  //put it in a LinkedList new node = newline for loop or something
-  //
-  //
-  //
-  // init ncurses screen
-  //
-  // while true
-  //
-  // for i in LinkedList: print char on screen, if gap print cursor char
-  //update ncurses screen
-  // if backspace pressed: remove char from gap GapBuffer
-  //
-  //if up arrow or down arrow move past behind(for up)/next new line - distance of cursor from current newline
-  //
-  //
-  // if C^-q pressed, save gap buffer to file, destruct gapbuffer quit
-  //
+  initscr();
+  keypad(stdscr, TRUE);
+  raw();
+  int fd = file_load(argv[1]);
 
-  enum mode {read, write, quit}; //start the program on read to read the file in if it is not blank
-  mode mode = read;
-
-  FILE *file; // open the file to be edited
-
-  if (mode == read)
+  bool quit = false;
+  while (quit == true)
   {
-    file = fopen(argv[1], "r");
+    if (KEY_F(1))
+    {
+      quit = true;
+    }
+    else
+    {
+
+    }
+    refresh();	/* Print it on to the real screen */
+  }
+  endwin();
+  close(fd);
+  return 0;
+}
+
+int file_load(char *file)
+{
+  vector<char> main_buffer;
+  char fd = open(file, O_RDWR | O_CREAT);
+  // checking for errors
+  if (fd == -1)
+  {
+    cout << "There was an error while trying to open or create " << file << endl;
   }
 
-  LinkedStack<char> main_buffer = LinkedStack<char>();
-  initscr();			/* Start curses mode 		  */
-
-  while (mode == quit)
-  {
-
-    main_buffer.Push(getch());			/* Wait for user input */
-    putc(main_buffer.Pop(), file);
-    refresh();			/* Print it on to the real screen */
-
-    if (getch() == '?')
+  while (ssize_t read(fd, main_buffer, 1) != EOF)
     {
-      endwin();
-      fclose(file);
-      mode = quit;
+      read(fd, main_buffer, 1);
     }
 
-  }
+  return fd;
+}
 
-
-  return 0;
+void refresh_from_buffers()
+{
+  //for char in edit:
+  // putc that char
 }
